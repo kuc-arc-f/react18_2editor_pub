@@ -2,7 +2,8 @@ import * as React from 'react';
 //import { Link } from 'react-router-dom';
 import LibSqlite from '../lib/LibSqlite';
 import LibConfig from '../lib/LibConfig';
-
+import LibStorage from '../lib/LibStorage';
+//
 interface IProps {
 //  history:string[],
 }
@@ -59,7 +60,9 @@ export default class Page extends React.Component<IProps, IState> {
           const Uints = new Uint8Array(r.result);
           const SQL = await LibSqlite.getSql();
           const db = new SQL.Database(Uints);
-          LibSqlite.setImportDb(db);
+//          LibSqlite.setImportDb(db);
+          await LibSqlite.setImportDb(db);
+          await LibStorage.save(db);
           let res = JSON.stringify(db.exec("SELECT sqlite_version();"));
 console.log(res);
           alert("Success, db import");

@@ -11,6 +11,7 @@ import {
   } from "react-router-dom";
 import LibSqlite from '../../lib/LibSqlite';
 import LibCategory from '../../lib/LibCategory';
+import LibStorage from '../../lib/LibStorage';
 //type
 type IPostItem = {
   id: number,
@@ -98,6 +99,7 @@ console.log(item);
       WHERE id = ${postId}
       `;
       await db.exec(sql);
+      await LibStorage.save(db);
       navigate('/posts');
     } catch (e) {
       console.error(e);
@@ -117,6 +119,7 @@ console.log(item);
       DELETE FROM Post WHERE id = ${postId}
       `;
       await db.exec(sql);
+      await LibStorage.save(db);
       navigate('/posts');
     } catch (e) {
       console.error(e);

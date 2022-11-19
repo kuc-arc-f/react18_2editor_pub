@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import LibSqlite from '../../lib/LibSqlite';
-
+import LibStorage from '../../lib/LibStorage';
 //
 import {
 //  Route,
@@ -73,6 +73,7 @@ console.log(id);
       WHERE id = ${postId}
       `;
       await db.exec(sql);
+      await LibStorage.save(db);
       navigate('/category');
     } catch (e) {
       console.error(e);
@@ -92,6 +93,7 @@ console.log(id);
       DELETE FROM Category WHERE id = ${postId}
       `;
       await db.exec(sql);
+      await LibStorage.save(db);
       navigate('/category');
     } catch (e) {
       console.error(e);

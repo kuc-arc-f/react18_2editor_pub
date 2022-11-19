@@ -2,6 +2,7 @@ import * as React from 'react';
 //import { useEffect, useState } from 'react';
 import { useEffect } from 'react';
 import LibSqlite from '../../lib/LibSqlite';
+import LibStorage from '../../lib/LibStorage';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 //
@@ -37,6 +38,7 @@ function Page() {
       );
       `;
       await db.exec(sql);
+      await LibStorage.save(db);
       navigate('/pages');
     } catch (e) {
       console.error(e);

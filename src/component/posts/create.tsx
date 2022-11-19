@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import LibSqlite from '../../lib/LibSqlite';
 import LibCategory from '../../lib/LibCategory';
+import LibStorage from '../../lib/LibStorage';
 //type
 type TCategoryItem = {
   id: number,
@@ -56,6 +57,7 @@ function Page() {
       );
       `;
       await db.exec(sql);
+      await LibStorage.save(db);
       navigate('/posts');
     } catch (e) {
       console.error(e);

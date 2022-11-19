@@ -72,32 +72,6 @@ console.log(item);
     }
   }  
   /**
-  * addPost
-  * @param
-  *
-  * @return
-  */ 
-  async addPost() {
-    try {   
-//      console.log("post.start"); 
-      const db = await LibSqlite.getDb();
-      const sql = `
-      INSERT INTO Post(title, createdAt, updatedAt)
-       VALUES
-      (
-        'title123', 
-        DATETIME('now','localtime'), 
-        DATETIME('now','localtime')
-      );
-      `;
-      db.exec(sql);
-      this.getList();
-    } catch (e) {
-      console.error(e);
-      alert("error, add");
-    }
-  }
-  /**
   * export
   * @param
   *
@@ -168,4 +142,24 @@ console.log(this.state.items);
 }
 
 /*
-to={`/post_edit/${item.id}`}*/
+to={`/post_edit/${item.id}`}
+  async addPost() {
+    try {   
+      const db = await LibSqlite.getDb();
+      const sql = `
+      INSERT INTO Post(title, createdAt, updatedAt)
+       VALUES
+      (
+        'title123', 
+        DATETIME('now','localtime'), 
+        DATETIME('now','localtime')
+      );
+      `;
+      db.exec(sql);
+      this.getList();
+    } catch (e) {
+      console.error(e);
+      alert("error, add");
+    }
+  }
+*/

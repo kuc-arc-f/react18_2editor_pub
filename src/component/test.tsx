@@ -7,7 +7,14 @@ import LibStorage from '../lib/LibStorage';
 function Page() {
   useEffect(() => {
     (async() => {
-//console.log(result);
+      //@ts-ignore
+//      const estimatePromise = StorageManager.estimate();
+//console.log(estimatePromise);
+      navigator.storage.estimate().then(function(estimate) {
+        //@ts-ignore
+        const d = (estimate.usage / estimate.quota * 100).toFixed(2);
+console.log(d);
+      });
     })()    
    
   }, []);
@@ -65,6 +72,10 @@ function Page() {
 }
 export default Page;
 /*
+<label>
+  You're currently using about <output id="percent">
+  </output>% of your available storage.
+</label>
       const buffer = new ArrayBuffer(db);
 
     (async() => {
