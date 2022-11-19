@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import LibSqlite from '../lib/LibSqlite';
+import LibPost from '../lib/LibPost';
 
 interface IProps {
 }
@@ -44,57 +45,14 @@ export default class Page extends React.Component<IProps, IState> {
   async getList() {
     try {   
       const db = await LibSqlite.getDb();
-      const sql = `
-      SELECT id, title, content, CategoryId
-      FROM Post;
-      `;
-      const result = await LibSqlite.select(db, sql);
-      if(result === null) {
-        return;
-      }
-      console.log(result);
-      const items: any[] = [];
-      result.forEach(function (item: any){
-        let row = {id: 0, title: "", content: ""};
-console.log(item);
-        if(item.length > 0) {
-          row.id = item[0];
-          row.title = item[1];
-          row.content = item[2];
-        }
-        items.push(row);
-      });
-      console.log(items);
+      const items = await LibPost.getList(db);
+console.log(items);
       this.setState({items: items});
     } catch (e) {
       console.error(e);
       alert("error, getList");
     }
   }  
-  /**
-  * export
-  * @param
-  *
-  * @return
-  */ 
-   async export() {
-    try {   
-      const db = await LibSqlite.getDb();
-      const uint8Array = db.export();
-//console.log(uint8Array);
-      const blob = new Blob([uint8Array], {type: 'application/octet-binary'});
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `cms.sqlite`;
-      a.click();
-      a.remove()      
-    } catch (e) {
-      console.error(e);
-      alert("error, export");
-    }
-  }
-
   /**
   * render
   * @param
@@ -113,10 +71,6 @@ console.log(this.state.items);
           </Link>       
         </div>
         <div className="col-sm-6 text-center">
-          {/*
-          <button className="btn btn-outline-primary" onClick={() => this.export()}
-          >Export</button>
-          */}
         </div>
       </div>
       <hr />
@@ -129,7 +83,7 @@ console.log(this.state.items);
           <Link to={`/post_edit?id=${item.id}`}
             className="btn btn-sm btn-outline-primary mx-2">Edit
           </Link><br />
-          ID: {item.id}
+          ID: {item.id}, category: {item.categoryName}
           <hr />
         </div>
         )        
@@ -142,24 +96,34 @@ console.log(this.state.items);
 }
 
 /*
-to={`/post_edit/${item.id}`}
-  async addPost() {
-    try {   
       const db = await LibSqlite.getDb();
       const sql = `
-      INSERT INTO Post(title, createdAt, updatedAt)
-       VALUES
-      (
-        'title123', 
-        DATETIME('now','localtime'), 
-        DATETIME('now','localtime')
-      );
+      select
+      Post.id ,
+      Post.title,
+      Post.content,
+      Post.createdAt,
+      Category.name
+      from Post
+      LEFT OUTER JOIN Category
+      ON Post.CategoryId = Category.id
+      ORDER BY Post.id DESC
+      ;
       `;
-      db.exec(sql);
-      this.getList();
-    } catch (e) {
-      console.error(e);
-      alert("error, add");
-    }
-  }
+      const result = await LibSqlite.select(db, sql);
+      if(result === null) {
+        return;
+      }
+      const items: any[] = [];
+      result.forEach(function (item: any){
+        let row = {id: 0, title: "", content: ""};
+console.log(item);
+        if(item.length > 0) {
+          row.id = item[0];
+          row.title = item[1];
+          row.content = item[2];
+        }
+        items.push(row);
+      });
+      console.log(items);
 */

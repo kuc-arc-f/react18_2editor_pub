@@ -108,6 +108,7 @@ console.log(res);
       await LibSqlite.setImportDb(null);
       const key = LibConfig.STORAGE_KEY_DB;
       localStorage.removeItem(key);
+      alert("Complete , remove");
     } catch (e) {
       console.error(e);
       alert("error, remove");
