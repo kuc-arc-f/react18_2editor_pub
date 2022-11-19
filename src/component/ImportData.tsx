@@ -1,6 +1,7 @@
 import * as React from 'react';
 //import { Link } from 'react-router-dom';
 import LibSqlite from '../lib/LibSqlite';
+import LibConfig from '../lib/LibConfig';
 
 interface IProps {
 //  history:string[],
@@ -94,6 +95,22 @@ console.log(res);
     }
   }
   /**
+  * remove, localStorage
+  * @param
+  *
+  */
+  async remove() {
+    try {   
+      //update, DB
+      await LibSqlite.setImportDb(null);
+      const key = LibConfig.STORAGE_KEY_DB;
+      localStorage.removeItem(key);
+    } catch (e) {
+      console.error(e);
+      alert("error, remove");
+    }
+  }
+  /**
   * render
   * @param
   *
@@ -111,6 +128,12 @@ console.log(this.state.items);
       <div className="col-sm-6 text-center">
         <button className="btn btn-outline-primary" onClick={() => this.export()}
         >Export</button>
+      </div>
+      <hr />
+      <h3>Delete, Local Storage</h3>
+      <div className="col-sm-6 text-center">
+        <button className="btn btn-outline-primary" onClick={() => this.remove()}
+        >Remove DB</button>
       </div>
       <hr />
     </div>

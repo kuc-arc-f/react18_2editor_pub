@@ -1,3 +1,5 @@
+//import LibConfig from '../lib/LibConfig';
+import LibStorage from '../lib/LibStorage';
 //
 const LibSqlite = {
   db: null,
@@ -14,6 +16,14 @@ const LibSqlite = {
         return this.db
       };
 console.log("db=none");
+      // import localStorage
+      const db = await LibStorage.get();
+//console.log(db);
+      if(db !== null) {
+        this.setImportDb(db);
+        return db;
+      }
+      // import file, public/cms.sqlite
       let sqlFilePath = "/cms.sqlite";
       //@ts-ignore
       const SQL = await initSqlJs({locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}`
