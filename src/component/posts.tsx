@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import LibSqlite from '../lib/LibSqlite';
 import LibPost from '../lib/LibPost';
+import LibCommon from '../lib/LibCommon';
 
 interface IProps {
 }
@@ -45,7 +46,8 @@ export default class Page extends React.Component<IProps, IState> {
   async getList() {
     try {   
       const db = await LibSqlite.getDb();
-      const items = await LibPost.getList(db);
+      let items = await LibPost.getList(db);
+      items = LibCommon.getDatetimeArray(items);
 console.log(items);
       this.setState({items: items});
     } catch (e) {
@@ -83,47 +85,16 @@ console.log(this.state.items);
           <Link to={`/post_edit?id=${item.id}`}
             className="btn btn-sm btn-outline-primary mx-2">Edit
           </Link><br />
-          ID: {item.id}, category: {item.categoryName}
+          {item.dt_str}, ID: {item.id}, Category: {item.categoryName}
           <hr />
         </div>
         )        
-      )}
-      <hr />
-      
+      )}      
     </div>
     );
   }  
 }
 
 /*
-      const db = await LibSqlite.getDb();
-      const sql = `
-      select
-      Post.id ,
-      Post.title,
-      Post.content,
-      Post.createdAt,
-      Category.name
-      from Post
-      LEFT OUTER JOIN Category
-      ON Post.CategoryId = Category.id
-      ORDER BY Post.id DESC
-      ;
-      `;
-      const result = await LibSqlite.select(db, sql);
-      if(result === null) {
-        return;
-      }
-      const items: any[] = [];
-      result.forEach(function (item: any){
-        let row = {id: 0, title: "", content: ""};
-console.log(item);
-        if(item.length > 0) {
-          row.id = item[0];
-          row.title = item[1];
-          row.content = item[2];
-        }
-        items.push(row);
-      });
-      console.log(items);
+const db = await LibSqlite.getDb();
 */

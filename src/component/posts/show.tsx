@@ -10,12 +10,16 @@ type IPostItem = {
   id: number,
   title : string,
   content : string,
+  category : string,
+  createdAt: string,
 }
 //
 function Page() {
   const [searchParams] = useSearchParams();
   const [postId, setPostId] = useState(0);
-  const [postItem, setPostItem] = useState<IPostItem>({id:0, title:"", content:""});
+  const [postItem, setPostItem] = useState<IPostItem>({
+    id:0, title:"", content:"", category:"", createdAt: ""
+  });
 
   useEffect(() => {
     (async() => {
@@ -36,19 +40,33 @@ console.log(id);
     try {   
       const db = await LibSqlite.getDb();
       const sql = `
-      SELECT id, title, content from Post WHERE
-      id = ${id};
+      select
+      Post.id ,
+      Post.title,
+      Post.content,
+      Post.createdAt,
+      Category.name
+      from Post
+      LEFT OUTER JOIN Category
+      ON Post.CategoryId = Category.id
+      WHERE 
+      Post.id = ${id};
       `;
       let item = await LibSqlite.select(db, sql);
       item = item[0];
-//console.log(item);
+console.log(item);
       let content = item[2];
       if(content === null) {
         return;
       }
       content = marked.parse(content);
+      let category = item[4];
+      let createdAt = item[3];
+console.log(createdAt);
       if(item.length > 0) {
-        setPostItem({id: id, title: item[1], content: content});
+        setPostItem({
+          id: id, title: item[1], content: content, category: category, createdAt: createdAt
+        });
       }
     } catch (e) {
       console.error(e);
@@ -64,16 +82,18 @@ console.log(id);
           <button className="btn btn-outline-primary my-2">Back 
           </button>
       </Link>      
+      {/*
       <h3>Post Show </h3>
-      ID : {postId}
       <hr />
+      */}
       <div className="col-sm-8">
-        <label>Title:</label>
         <h3>{postItem.title}</h3>
+        {postItem.createdAt}<br />
+        ID : {postId}<br />
+        Category: {postItem.category}
       </div>
       <hr />
       <div className="col-sm-12">
-        <label>Content:</label>
         <div id="post_item" dangerouslySetInnerHTML={{__html: `${postItem.content}`}}>
         </div>        
       </div>
@@ -94,4 +114,6 @@ console.log(id);
 export default Page;
 /*
 <pre>{postItem.content}</pre>
+SELECT id, title, content from Post WHERE
+id = ${id};
 */

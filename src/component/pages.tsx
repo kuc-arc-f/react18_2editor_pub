@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import LibSqlite from '../lib/LibSqlite';
+import LibCommon from '../lib/LibCommon';
 
 interface IProps {
 //  history:string[],
@@ -45,23 +46,30 @@ export default class Page extends React.Component<IProps, IState> {
   async getList() {
     try {   
       const db = await LibSqlite.getDb();
-      const result = await LibSqlite.select(db, "SELECT id, title, content FROM Page;");
+      const sql = `
+      SELECT id, title, content, createdAt FROM Page
+      ORDER BY id DESC;
+      `;
+      //SELECT id, title, content, createdAt FROM Page;
+      const result = await LibSqlite.select(db, sql);
       if(result === null) {
         return;
       }
       console.log(result);
-      const items: any[] = [];
+      let items: any[] = [];
       result.forEach(function (item: any){
-        let row = {id: 0, title: "", content: ""};
-        console.log(item);
+        let row = {id: 0, title: "", content: "", createdAt: ""};
+//console.log(item);
         if(item.length > 0) {
           row.id = item[0];
           row.title = item[1];
           row.content = item[2];
+          row.createdAt = item[3];
         }
         items.push(row);
       });
-      console.log(items);
+      items = LibCommon.getDatetimeArray(items);
+console.log(items);
       this.setState({items: items});
     } catch (e) {
       console.error(e);
@@ -99,13 +107,11 @@ console.log(this.state.items);
           <Link to={`/page_edit?id=${item.id}`}
             className="btn btn-sm btn-outline-primary mx-2">Edit
           </Link><br />
-          ID: {item.id}
+          {item.dt_str}, ID: {item.id}
           <hr />
         </div>
         )        
-      )}
-      <hr />
-      
+      )}      
     </div>
     );
   }  

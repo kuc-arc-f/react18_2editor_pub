@@ -16,12 +16,15 @@ type IPostItem = {
   id: number,
   title : string,
   content : string,
+  createdAt: string,
 }
 //
 function Page() {
   const [searchParams] = useSearchParams();
   const [postId, setPostId] = useState(0);
-  const [postItem, setPostItem] = useState<IPostItem>({id:0, title:"", content:""});
+  const [postItem, setPostItem] = useState<IPostItem>({
+    id:0, title:"", content: "", createdAt: ""
+  });
 
   useEffect(() => {
     (async() => {
@@ -42,7 +45,7 @@ console.log(id);
     try {   
       const db = await LibSqlite.getDb();
       const sql = `
-      SELECT id, title, content from Page WHERE
+      SELECT id, title, content, createdAt from Page WHERE
       id = ${id};
       `;
       let item = await LibSqlite.select(db, sql);
@@ -52,9 +55,11 @@ console.log(id);
       if(content === null) {
         return;
       }
+      let createdAt = item[3];
+//console.log(createdAt);
       content = marked.parse(content);
       if(item.length > 0) {
-        setPostItem({id: id, title: item[1], content: content});
+        setPostItem({id: id, title: item[1], content: content, createdAt: createdAt});
       }
     } catch (e) {
       console.error(e);
@@ -69,17 +74,19 @@ console.log(id);
         <Link to={`/pages`} >
             <button className="btn btn-outline-primary my-2">Back 
             </button>
-        </Link>           
+        </Link>     
+        {/*
         <h3>Page Show </h3>
-        ID : {postId}
         <hr />
+        */}
         <div className="col-sm-8">
-          <label>Title:</label>
+          {/* <label>Title:</label> */}
           <h3>{postItem.title}</h3>
+          {postItem.createdAt}<br />
+          ID : {postId}
         </div>
         <hr />
         <div className="col-sm-12">
-          <label>Content:</label>
           <div id="post_item" dangerouslySetInnerHTML={{__html: `${postItem.content}`}}>
           </div>        
         </div>
